@@ -74,37 +74,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         super.onCreate(savedInstanceState);
-        mapView = (MapView)findViewById(R.id.mapview);
+        mapView = findViewById(R.id.mapview);
         mapView.getMap().move(
                 new CameraPosition(CAMERA_TARGET, 15.0f, 0.0f, 0.0f));
         mapObjects = mapView.getMap().getMapObjects().addCollection();
-
         createMapObjects();
-
         button = findViewById(R.id.buttonMove);
         button1 = findViewById(R.id.buttonMove1);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        button.setOnClickListener(view -> {
 
-                moveMark(markA, placemarkPointC);
-                markA = markTemp;
-                Log.d("Connect", "Bt: ");
-            }
+            moveMark(markA, placemarkPointC);
+            markA = markTemp;
+            Log.d("Connect", "Bt: ");
         });
 
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                moveMark(markA,placemarkPointD);
-                markA = markTemp;
-
-                Log.d("Connect", "Bt1: ");
-            }
+        button1.setOnClickListener(view -> {
+            moveMark(markA,placemarkPointD);
+            markA = markTemp;
+            Log.d("Connect", "Bt1: ");
         });
-
-
     }
 
     @Override
@@ -135,18 +124,12 @@ public class MainActivity extends AppCompatActivity {
     private void moveMark(PlacemarkMapObject mark, Point point){
         markTemp = mark;
         mapObjects.remove(markTemp);
-
         markTemp = mapObjects.addPlacemark(new Point(point.getLatitude(),point.getLongitude()));
         markTemp.setOpacity(0.5f);
         markTemp.setIcon(ImageProvider.fromResource(this,R.drawable.mark));
-
-        runOnUiThread(() -> {
-
-        });
-
-
-        }
+        //runOnUiThread(() -> { });
     }
+}
 
 
 
