@@ -25,6 +25,7 @@ import com.yandex.mapkit.geometry.Polyline;
 import com.yandex.mapkit.map.CameraPosition;
 
 import com.yandex.mapkit.map.CircleMapObject;
+import com.yandex.mapkit.map.MapObject;
 import com.yandex.mapkit.map.MapObjectCollection;
 import com.yandex.mapkit.map.PatternRepeatMode;
 import com.yandex.mapkit.map.PlacemarkMapObject;
@@ -40,15 +41,21 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     private final String MAPKIT_API_KEY = "87cdeb65-699e-457f-9556-526e43c35303";
-    private final Point CAMERA_TARGET = new Point(59.952, 30.318);
+    private final Point CAMERA_TARGET = new Point(59.948, 30.3235);
 
     private final Point placemarkPointA = new Point(59.947, 30.323);
     private final Point placemarkPointB = new Point(59.948, 30.3235);
     private final Point placemarkPointC = new Point(59.949, 30.3235);
+    private final Point placemarkPointD = new Point(59.95, 30.3235);
+
+    private Point tempPlacemarkPoint = new Point();
 
 
     PlacemarkMapObject markA;
     PlacemarkMapObject markB;
+    PlacemarkMapObject markA1;
+    PlacemarkMapObject markB1;
+
     PlacemarkMapObject markC;
 
     private MapView mapView;
@@ -56,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private Button button;
+    private Button button1;
 
     Boolean fixButton = false;
 
@@ -74,13 +82,26 @@ public class MainActivity extends AppCompatActivity {
         createMapObjects();
 
         button = findViewById(R.id.buttonMove);
+        button1 = findViewById(R.id.buttonMove1);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                moveMark();
-                Log.d("Connect", "onClick: ");
+
+                moveMark(markA, placemarkPointC);
+                Log.d("Connect", "Bt: ");
             }
         });
+
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                moveMark(markA,placemarkPointD);
+                Log.d("Connect", "Bt1: ");
+            }
+        });
+
+
     }
 
     @Override
@@ -108,18 +129,20 @@ public class MainActivity extends AppCompatActivity {
         markB.setIcon(ImageProvider.fromResource(this,R.drawable.mark));
     }
 
-    private void moveMark(){
-        if (fixButton == false){
-            mapObjects.remove(markA);
+    private void moveMark(PlacemarkMapObject mark, Point point){
+        mapObjects.remove(mark);
 
-            markA = mapObjects.addPlacemark(placemarkPointC);
-            markA.setOpacity(0.5f);
-            markA.setIcon(ImageProvider.fromResource(this,R.drawable.mark));
-            fixButton = true;
+        mark = mapObjects.addPlacemark(new Point(point.getLatitude(),point.getLongitude()));
+        mark.setOpacity(0.5f);
+        mark.setIcon(ImageProvider.fromResource(this,R.drawable.mark));
+
+        runOnUiThread(() -> {
+
+        });
+
+
         }
-
-
     }
-}
+
 
 
