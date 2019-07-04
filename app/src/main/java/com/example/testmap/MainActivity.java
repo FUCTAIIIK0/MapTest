@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     PlacemarkMapObject markA;
     PlacemarkMapObject markB;
-    PlacemarkMapObject markA1;
+    PlacemarkMapObject markTemp;
     PlacemarkMapObject markB1;
 
     PlacemarkMapObject markC;
@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 moveMark(markA, placemarkPointC);
+                markA = markTemp;
                 Log.d("Connect", "Bt: ");
             }
         });
@@ -97,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 moveMark(markA,placemarkPointD);
+                markA = markTemp;
+
                 Log.d("Connect", "Bt1: ");
             }
         });
@@ -130,11 +133,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void moveMark(PlacemarkMapObject mark, Point point){
-        mapObjects.remove(mark);
+        markTemp = mark;
+        mapObjects.remove(markTemp);
 
-        mark = mapObjects.addPlacemark(new Point(point.getLatitude(),point.getLongitude()));
-        mark.setOpacity(0.5f);
-        mark.setIcon(ImageProvider.fromResource(this,R.drawable.mark));
+        markTemp = mapObjects.addPlacemark(new Point(point.getLatitude(),point.getLongitude()));
+        markTemp.setOpacity(0.5f);
+        markTemp.setIcon(ImageProvider.fromResource(this,R.drawable.mark));
 
         runOnUiThread(() -> {
 
