@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,18 +41,23 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
     private final String MAPKIT_API_KEY = "87cdeb65-699e-457f-9556-526e43c35303";
     private final Point CAMERA_TARGET = new Point(59.952, 30.318);
-    private final Point ANIMATED_RECTANGLE_CENTER = new Point(59.956, 30.313);
-    private final Point TRIANGLE_CENTER = new Point(59.948, 30.313);
-    private final Point POLYLINE_CENTER = CAMERA_TARGET;
-    private final Point CIRCLE_CENTER = new Point(59.956, 30.323);
-    private final Point DRAGGABLE_PLACEMARK_CENTER = new Point(59.948, 30.323);
-    private final double OBJECT_SIZE = 0.0015;
+
+    private final Point placemarkPointA = new Point(59.947, 30.323);
+    private final Point placemarkPointB = new Point(59.948, 30.3235);
+    private final Point placemarkPointC = new Point(59.949, 30.3235);
+
+
+    PlacemarkMapObject markA;
+    PlacemarkMapObject markB;
+    PlacemarkMapObject markC;
 
     private MapView mapView;
     private MapObjectCollection mapObjects;
-    private Handler animationHandler;
+
 
     private Button button;
+
+    Boolean fixButton = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +70,14 @@ public class MainActivity extends AppCompatActivity {
         mapView.getMap().move(
                 new CameraPosition(CAMERA_TARGET, 15.0f, 0.0f, 0.0f));
         mapObjects = mapView.getMap().getMapObjects().addCollection();
-        animationHandler = new Handler();
+
         createMapObjects();
 
         button = findViewById(R.id.buttonMove);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                moveMark();
                 Log.d("Connect", "onClick: ");
             }
         });
@@ -91,20 +98,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createMapObjects() {
-        AnimatedImageProvider animatedImage = AnimatedImageProvider.fromAsset(this, "animation.png");
+        markA = mapObjects.addPlacemark(placemarkPointA);
+        markA.setOpacity(0.5f);
+        markA.setIcon(ImageProvider.fromResource(this, R.drawable.mark));
+        markA.setDraggable(false);
 
-
-
-        PlacemarkMapObject mark = mapObjects.addPlacemark(DRAGGABLE_PLACEMARK_CENTER);
-        mark.setOpacity(0.5f);
-        mark.setIcon(ImageProvider.fromResource(this, R.drawable.mark));
-        mark.setDraggable(true);
+        markB = mapObjects.addPlacemark(placemarkPointB);
+        markB.setOpacity(0.5f);
+        markB.setIcon(ImageProvider.fromResource(this,R.drawable.mark));
     }
+
     private void moveMark(){
+        if (fixButton == false){
+            mapObjects.remove(markA);
+
+            markA = mapObjects.addPlacemark(placemarkPointC);
+            markA.setOpacity(0.5f);
+            markA.setIcon(ImageProvider.fromResource(this,R.drawable.mark));
+            fixButton = true;
+        }
+
 
     }
-
-
-    }
+}
 
 
