@@ -7,8 +7,12 @@ import android.os.Bundle;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKitFactory;
@@ -46,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
     private MapView mapView;
     private MapObjectCollection mapObjects;
     private Handler animationHandler;
+
+    private Button button;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         MapKitFactory.setApiKey(MAPKIT_API_KEY);
@@ -59,6 +66,14 @@ public class MainActivity extends AppCompatActivity {
         mapObjects = mapView.getMap().getMapObjects().addCollection();
         animationHandler = new Handler();
         createMapObjects();
+
+        button = findViewById(R.id.buttonMove);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("Connect", "onClick: ");
+            }
+        });
     }
 
     @Override
@@ -77,99 +92,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void createMapObjects() {
         AnimatedImageProvider animatedImage = AnimatedImageProvider.fromAsset(this, "animation.png");
-        ArrayList<Point> rectPoints = new ArrayList<>();
-        rectPoints.add(new Point(
-                ANIMATED_RECTANGLE_CENTER.getLatitude() - OBJECT_SIZE,
-                ANIMATED_RECTANGLE_CENTER.getLongitude() - OBJECT_SIZE));
-        rectPoints.add(new Point(
-                ANIMATED_RECTANGLE_CENTER.getLatitude() - OBJECT_SIZE,
-                ANIMATED_RECTANGLE_CENTER.getLongitude() + OBJECT_SIZE));
-        rectPoints.add(new Point(
-                ANIMATED_RECTANGLE_CENTER.getLatitude() + OBJECT_SIZE,
-                ANIMATED_RECTANGLE_CENTER.getLongitude() + OBJECT_SIZE));
-        rectPoints.add(new Point(
-                ANIMATED_RECTANGLE_CENTER.getLatitude() + OBJECT_SIZE,
-                ANIMATED_RECTANGLE_CENTER.getLongitude() - OBJECT_SIZE));
-        PolygonMapObject rect = mapObjects.addPolygon(
-                new Polygon(new LinearRing(rectPoints), new ArrayList<LinearRing>()));
-        rect.setStrokeColor(Color.TRANSPARENT);
-        rect.setFillColor(Color.TRANSPARENT);
-        rect.setAnimatedImage(animatedImage, 32.0f, PatternRepeatMode.REPEAT);
 
-        ArrayList<Point> trianglePoints = new ArrayList<>();
-        trianglePoints.add(new Point(
-                TRIANGLE_CENTER.getLatitude() + OBJECT_SIZE,
-                TRIANGLE_CENTER.getLongitude() - OBJECT_SIZE));
-        trianglePoints.add(new Point(
-                TRIANGLE_CENTER.getLatitude() - OBJECT_SIZE,
-                TRIANGLE_CENTER.getLongitude() - OBJECT_SIZE));
-        trianglePoints.add(new Point(
-                TRIANGLE_CENTER.getLatitude(),
-                TRIANGLE_CENTER.getLongitude() + OBJECT_SIZE));
-        PolygonMapObject triangle = mapObjects.addPolygon(
-                new Polygon(new LinearRing(trianglePoints), new ArrayList<LinearRing>()));
-        triangle.setFillColor(Color.BLUE);
-        triangle.setStrokeColor(Color.BLACK);
-        triangle.setStrokeWidth(1.0f);
-        triangle.setZIndex(100.0f);
 
-        CircleMapObject circle = mapObjects.addCircle(
-                new Circle(CIRCLE_CENTER, 100), Color.GREEN, 2, Color.RED);
-        circle.setZIndex(100.0f);
-
-        ArrayList<Point> polylinePoints = new ArrayList<>();
-        polylinePoints.add(new Point(
-                POLYLINE_CENTER.getLatitude() + OBJECT_SIZE,
-                POLYLINE_CENTER.getLongitude()- OBJECT_SIZE));
-        polylinePoints.add(new Point(
-                POLYLINE_CENTER.getLatitude() - OBJECT_SIZE,
-                POLYLINE_CENTER.getLongitude()- OBJECT_SIZE));
-        polylinePoints.add(new Point(
-                POLYLINE_CENTER.getLatitude(),
-                POLYLINE_CENTER.getLongitude() + OBJECT_SIZE));
-
-        PolylineMapObject polyline = mapObjects.addPolyline(new Polyline(polylinePoints));
-        polyline.setStrokeColor(Color.BLACK);
-        polyline.setZIndex(100.0f);
 
         PlacemarkMapObject mark = mapObjects.addPlacemark(DRAGGABLE_PLACEMARK_CENTER);
         mark.setOpacity(0.5f);
         mark.setIcon(ImageProvider.fromResource(this, R.drawable.mark));
         mark.setDraggable(true);
+    }
+    private void moveMark(){
 
-        createPlacemarkMapObjectWithViewProvider();
     }
 
-    private void createPlacemarkMapObjectWithViewProvider() {
-        final TextView textView = new TextView(this);
-        final int[] colors = new int[] { Color.RED, Color.GREEN, Color.BLACK };
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        textView.setLayoutParams(params);
 
-        textView.setTextColor(Color.RED);
-        textView.setText("Hello, World!");
-
-        final ViewProvider viewProvider = new ViewProvider(textView);
-        final PlacemarkMapObject viewPlacemark =
-                mapObjects.addPlacemark(new Point(59.946263, 30.315181), viewProvider);
-
-        final Random random = new Random();
-        final int delayToShowInitialText = 5000;  // milliseconds
-        final int delayToShowRandomText = 500; // milliseconds;
-
-        // Show initial text `delayToShowInitialText` milliseconds and then
-        // randomly change text in textView every `delayToShowRandomText` milliseconds
-        animationHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final int randomInt = random.nextInt(1000);
-                textView.setText("Some text version " + randomInt);
-                textView.setTextColor(colors[randomInt % colors.length]);
-                viewProvider.snapshot();
-                viewPlacemark.setView(viewProvider);
-                animationHandler.postDelayed(this, delayToShowRandomText);
-            }
-        }, delayToShowInitialText);
     }
-}
+
 
